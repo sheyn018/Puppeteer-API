@@ -15,6 +15,7 @@ COPY tsconfig.json ./
 
 # Copy your actual project files (ensure you include all necessary files)
 COPY . .
+RUN chmod +x ./node_modules/.bin/tsc
 
 # Compile TypeScript to JavaScript
 RUN npm run build
