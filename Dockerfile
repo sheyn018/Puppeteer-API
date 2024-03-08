@@ -39,4 +39,4 @@ COPY --from=builder /usr/src/app/dist ./dist
 EXPOSE 3001
 
 # Adjust the CMD to point to your compiled main JavaScript file
-CMD ["node", "dist/api/index.js"]
+CMD ["node", "dist/index.js"]
