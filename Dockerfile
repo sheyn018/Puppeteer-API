@@ -1,16 +1,22 @@
-# Base stage with Node.js
-FROM node:16-slim AS base
+# Use the builder stage to install dependencies and compile TypeScript
+FROM node:16-slim as builder
+
+# Set the working directory
 WORKDIR /usr/src/app
 
-# Builder stage for installing dependencies and building the TypeScript app
-FROM base AS builder
+# Copy package.json and package-lock.json (or yarn.lock) for installing dependencies
 COPY package*.json ./
-# Install all dependencies (including dev for building)
+
+# Install dependencies
 RUN npm install
-# Copy your source code and other necessary files
-COPY . ./
-# Compile TypeScript to JavaScript
-RUN npm run build
+
+# Copy TypeScript configuration and source files
+COPY tsconfig.json ./
+COPY . .
+RUN chmod +x ./node_modules/.bin/tsc
+
+# Compile TypeScript to JavaScript using npx to directly call tsc
+RUN npx tsc
 
 # Final stage: Install Chrome and copy built assets from the builder
 FROM base AS runtime
