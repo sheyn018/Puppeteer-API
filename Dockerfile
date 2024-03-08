@@ -52,8 +52,7 @@ RUN apt-get update && apt-get install -y \
     libxrandr2 \
     libgbm1 \
     libxss1 \
-    libxtst6 \
-    libgobject-2.0-0
+    libxtst6
 
 # Copy package.json and package-lock.json for npm ci --only=production
 COPY package*.json ./
