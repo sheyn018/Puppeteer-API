@@ -13,13 +13,15 @@ RUN npm install
 # Copy TypeScript configuration and source files
 COPY tsconfig.json ./
 COPY . .
-RUN chmod +x ./node_modules/.bin/tsc
 
 # Compile TypeScript to JavaScript using npx to directly call tsc
 RUN npx tsc
 
 # Final stage: Install Chrome and copy built assets from the builder
-FROM base AS runtime
+FROM node:16-slim AS runtime
+
+# Set the working directory in the runtime stage
+WORKDIR /usr/src/app
 
 # Install necessary libraries and Google Chrome for Puppeteer
 RUN apt-get update \
@@ -38,8 +40,6 @@ RUN apt-get update \
 COPY --from=builder /usr/src/app/dist ./dist
 
 # Set environment variable for Puppeteer
-# To make sure Puppeteer uses the installed version of Chrome,
-# you can set the PUPPETEER_EXECUTABLE_PATH environment variable.
 ENV PUPPETEER_EXECUTABLE_PATH /usr/bin/google-chrome-stable
 
 # Expose the port your app runs on
