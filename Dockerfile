@@ -19,6 +19,9 @@ RUN npx tsc
 # Use a fresh image to reduce size
 FROM node:16-slim
 
+# Set the working directory in the production image
+WORKDIR /usr/src/app
+
 # Install Puppeteer dependencies
 RUN apt-get update && apt-get install -y \
     wget \
@@ -51,9 +54,6 @@ RUN apt-get update && apt-get install -y \
     libxss1 \
     libxtst6 \
     libgobject-2.0-0
-    
-# Set the working directory in the production image
-WORKDIR /usr/src/app
 
 # Copy package.json and package-lock.json for npm ci --only=production
 COPY package*.json ./
