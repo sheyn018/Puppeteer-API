@@ -1,34 +1,8 @@
+# Step 1: Use an official Node.js runtime as a parent image
 FROM node:16-slim as builder
 
-# Set the working directory in the builder stage
-WORKDIR /usr/src/app
-
-# Copy package.json and package-lock.json for npm install
-COPY package*.json ./
-
-# Install dependencies, including 'typescript' and any other build tools
-RUN npm install
-
-# Copy your TypeScript configuration file and source files
-COPY tsconfig.json ./
-COPY . .
-
-# Compile TypeScript to JavaScript
-RUN npx tsc
-
-# Use a fresh image to reduce size
-FROM node:16-slim
-
-# Set the working directory in the production image
-WORKDIR /usr/src/app
-
-# Install Puppeteer dependencies
-RUN apt-get update && apt-get install -y \
-    wget \
-    gnupg \
-    ca-certificates \
-    procps \
-    libxshmfence-dev \
+# Install necessary dependencies for Puppeteer's Chrome
+RUN apt-get update && apt-get install -y wget gnupg ca-certificates procps libxshmfence-dev \
     libnss3 \
     libnspr4 \
     libatk1.0-0 \
@@ -53,6 +27,31 @@ RUN apt-get update && apt-get install -y \
     libgbm1 \
     libxss1 \
     libxtst6
+
+# Set the working directory in the builder stage
+WORKDIR /usr/src/app
+
+# Copy package.json and package-lock.json for npm install
+COPY package*.json ./
+
+# Install dependencies, including 'typescript' and any other build tools
+RUN npm install
+
+# Copy your TypeScript configuration file
+COPY tsconfig.json ./
+
+# Copy your actual project files (ensure you include all necessary files)
+COPY . .
+RUN chmod +x ./node_modules/.bin/tsc
+
+# Compile TypeScript to JavaScript
+RUN npx tsc
+
+# Step 2: Use a fresh image to reduce size
+FROM node:16-slim
+
+# Set the working directory in the production image
+WORKDIR /usr/src/app
 
 # Copy package.json and package-lock.json for npm ci --only=production
 COPY package*.json ./
