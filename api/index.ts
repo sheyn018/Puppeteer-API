@@ -28,7 +28,7 @@ app.get('/capture-screenshot', async (req: any, res: { status: (arg0: number) =>
         res.status(500).json({ error: 'Unexpected error' });
     }
 });
-
+ 
 async function captureScreenshot(url: string) {
     const browser = await puppeteer.launch({ignoreDefaultArgs: ['--disable-extensions']})
     const page = await browser.newPage();
