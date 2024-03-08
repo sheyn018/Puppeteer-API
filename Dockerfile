@@ -20,7 +20,7 @@ COPY . .
 RUN npm run build
 
 # Step 2: Use a fresh image to reduce size
-FROM node:16-slim as builder
+FROM node:16-slim
 
 # Set the working directory in the production image
 WORKDIR /usr/src/app
