@@ -1,5 +1,24 @@
 FROM node:16-slim as builder
 
+# Set the working directory in the builder stage
+WORKDIR /usr/src/app
+
+# Copy package.json and package-lock.json for npm install
+COPY package*.json ./
+
+# Install dependencies, including 'typescript' and any other build tools
+RUN npm install
+
+# Copy your TypeScript configuration file and source files
+COPY tsconfig.json ./
+COPY . .
+
+# Compile TypeScript to JavaScript
+RUN npx tsc
+
+# Use a fresh image to reduce size
+FROM node:16-slim
+
 # Install Puppeteer dependencies
 RUN apt-get update && apt-get install -y \
     wget \
@@ -32,26 +51,7 @@ RUN apt-get update && apt-get install -y \
     libxss1 \
     libxtst6 \
     libgobject-2.0-0
-
-# Set the working directory in the builder stage
-WORKDIR /usr/src/app
-
-# Copy package.json and package-lock.json for npm install
-COPY package*.json ./
-
-# Install dependencies, including 'typescript' and any other build tools
-RUN npm install
-
-# Copy your TypeScript configuration file and source files
-COPY tsconfig.json ./
-COPY . .
-
-# Compile TypeScript to JavaScript
-RUN npx tsc
-
-# Use a fresh image to reduce size
-FROM node:16-slim
-
+    
 # Set the working directory in the production image
 WORKDIR /usr/src/app
 
