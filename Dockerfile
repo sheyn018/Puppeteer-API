@@ -1,26 +1,29 @@
 # Use the builder stage to install dependencies and compile TypeScript
 FROM node:16-slim AS builder
 
-# Set the working directory
+# Set the working directory in the builder stage
 WORKDIR /usr/src/app
 
-# Copy package.json and package-lock.json (or yarn.lock) for installing dependencies
+# Copy package.json and package-lock.json for npm install
 COPY package*.json ./
 
-# Install dependencies
+# Install dependencies, including 'typescript' and any other build tools
 RUN npm install
 
-# Copy TypeScript configuration and source files
+# Copy your TypeScript configuration file
 COPY tsconfig.json ./
-COPY . .
 
-# Compile TypeScript to JavaScript using npx to directly call tsc
+# Copy your actual project files (ensure you include all necessary files)
+COPY . .
+RUN chmod +x ./node_modules/.bin/tsc
+
+# Compile TypeScript to JavaScript
 RUN npx tsc
 
-# Final stage: Install Chrome and copy built assets from the builder
-FROM node:16-slim AS runtime
+# Step 2: Use a fresh image to reduce size
+FROM node:16-slim
 
-# Set the working directory in the runtime stage
+# Set the working directory in the production image
 WORKDIR /usr/src/app
 
 # Install necessary libraries for Google Chrome
