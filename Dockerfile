@@ -37,5 +37,5 @@ COPY --from=builder /usr/src/app/dist ./dist
 # Expose the port the app runs on
 EXPOSE 3001
 
-# Command to run your app using the compiled JavaScript
+# Adjust the CMD to point to your compiled main JavaScript file
 CMD ["node", "dist/api/index.js"]
