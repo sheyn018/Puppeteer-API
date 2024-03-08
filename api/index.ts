@@ -30,9 +30,7 @@ app.get('/capture-screenshot', async (req: any, res: { status: (arg0: number) =>
 });
 
 async function captureScreenshot(url: string) {
-    const browser = await puppeteer.launch({
-        args: ['--no-sandbox', '--disable-setuid-sandbox'],
-    });
+    const browser = await puppeteer.launch({ignoreDefaultArgs: ['--disable-extensions']})
     const page = await browser.newPage();
 
     try {
