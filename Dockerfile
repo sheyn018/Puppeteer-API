@@ -1,7 +1,7 @@
 FROM node:16-slim as builder
 
 # Install Puppeteer dependencies
-RUN apt-get update && apt-get install -y --no-install-recommends \
+RUN apt-get update && apt-get install -y \
     wget \
     gnupg \
     ca-certificates \
@@ -42,17 +42,14 @@ COPY package*.json ./
 # Install dependencies, including 'typescript' and any other build tools
 RUN npm install
 
-# Copy your TypeScript configuration file
+# Copy your TypeScript configuration file and source files
 COPY tsconfig.json ./
-
-# Copy your actual project files (ensure you include all necessary files)
 COPY . .
-RUN chmod +x ./node_modules/.bin/tsc
 
 # Compile TypeScript to JavaScript
 RUN npx tsc
 
-# Step 2: Use a fresh image to reduce size
+# Use a fresh image to reduce size
 FROM node:16-slim
 
 # Set the working directory in the production image
