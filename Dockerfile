@@ -1,69 +1,43 @@
-# Step 1: Use an official Node.js runtime as a parent image
-FROM node:16-slim as builder
-
-# Install necessary dependencies for Puppeteer's Chrome
-RUN apt-get update && apt-get install -y wget gnupg ca-certificates procps libxshmfence-dev \
-    libnss3 \
-    libnspr4 \
-    libatk1.0-0 \
-    libatk-bridge2.0-0 \
-    libcups2 \
-    libdbus-1-3 \
-    libdrm2 \
-    libexpat1 \
-    libgcc1 \
-    libgdk-pixbuf2.0-0 \
-    libglib2.0-0 \
-    libgtk-3-0 \
-    libpango-1.0-0 \
-    libx11-6 \
-    libx11-xcb1 \
-    libxcb1 \
-    libxcomposite1 \
-    libxdamage1 \
-    libxext6 \
-    libxfixes3 \
-    libxrandr2 \
-    libgbm1 \
-    libxss1 \
-    libxtst6
-
-# Set the working directory in the builder stage
+# Base stage with Node.js
+FROM node:16-slim AS base
 WORKDIR /usr/src/app
 
-# Copy package.json and package-lock.json for npm install
+# Builder stage for installing dependencies and building the TypeScript app
+FROM base AS builder
 COPY package*.json ./
-
-# Install dependencies, including 'typescript' and any other build tools
+# Install all dependencies (including dev for building)
 RUN npm install
-
-# Copy your TypeScript configuration file
-COPY tsconfig.json ./
-
-# Copy your actual project files (ensure you include all necessary files)
-COPY . .
-RUN chmod +x ./node_modules/.bin/tsc
-
+# Copy your source code and other necessary files
+COPY . ./
 # Compile TypeScript to JavaScript
-RUN npx tsc
+RUN npm run build
 
-# Step 2: Use a fresh image to reduce size
-FROM node:16-slim
+# Final stage: Install Chrome and copy built assets from the builder
+FROM base AS runtime
 
-# Set the working directory in the production image
-WORKDIR /usr/src/app
+# Install necessary libraries and Google Chrome for Puppeteer
+RUN apt-get update \
+    && apt-get install -y wget gnupg ca-certificates procps libxshmfence-dev libnss3 libnspr4 libatk1.0-0 \
+    libatk-bridge2.0-0 libcups2 libdbus-1-3 libdrm2 libexpat1 libgcc1 libgdk-pixbuf2.0-0 libglib2.0-0 libgtk-3-0 \
+    libpango-1.0-0 libx11-6 libx11-xcb1 libxcb1 libxcomposite1 libxdamage1 libxext6 libxfixes3 libxrandr2 libgbm1 \
+    libxss1 libxtst6 fonts-ipafont-gothic fonts-wqy-zenhei fonts-thai-tlwg fonts-kacst fonts-freefont-ttf \
+    --no-install-recommends \
+    && wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - \
+    && sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list' \
+    && apt-get update \
+    && apt-get install -y google-chrome-stable \
+    && rm -rf /var/lib/apt/lists/*
 
-# Copy package.json and package-lock.json for npm ci --only=production
-COPY package*.json ./
-
-# Install only production dependencies
-RUN npm ci --only=production
-
-# Copy compiled JavaScript from the builder stage
+# Copy built JavaScript files and other assets from the builder stage
 COPY --from=builder /usr/src/app/dist ./dist
 
-# Expose the port the app runs on
+# Set environment variable for Puppeteer
+# To make sure Puppeteer uses the installed version of Chrome,
+# you can set the PUPPETEER_EXECUTABLE_PATH environment variable.
+ENV PUPPETEER_EXECUTABLE_PATH /usr/bin/google-chrome-stable
+
+# Expose the port your app runs on
 EXPOSE 3001
 
-# Adjust the CMD to point to your compiled main JavaScript file
+# Command to run your app
 CMD ["node", "dist/index.js"]
