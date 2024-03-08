@@ -1,6 +1,33 @@
 # Step 1: Use an official Node.js runtime as a parent image
 FROM node:16-slim as builder
 
+# Install necessary dependencies for Puppeteer's Chrome
+RUN apt-get update && apt-get install -y wget gnupg ca-certificates procps libxshmfence-dev \
+    libnss3 \
+    libnspr4 \
+    libatk1.0-0 \
+    libatk-bridge2.0-0 \
+    libcups2 \
+    libdbus-1-3 \
+    libdrm2 \
+    libexpat1 \
+    libgcc1 \
+    libgdk-pixbuf2.0-0 \
+    libglib2.0-0 \
+    libgtk-3-0 \
+    libpango-1.0-0 \
+    libx11-6 \
+    libx11-xcb1 \
+    libxcb1 \
+    libxcomposite1 \
+    libxdamage1 \
+    libxext6 \
+    libxfixes3 \
+    libxrandr2 \
+    libgbm1 \
+    libxss1 \
+    libxtst6
+
 # Set the working directory in the builder stage
 WORKDIR /usr/src/app
 
