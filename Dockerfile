@@ -31,7 +31,7 @@ RUN apt-get update && apt-get install -y \
     libgbm1 \
     libxss1 \
     libxtst6 \
-    libgobject-2.0-0  # Make sure this line is added
+    libgobject-2.0-0
 
 # Set the working directory in the builder stage
 WORKDIR /usr/src/app
