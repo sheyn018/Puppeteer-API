@@ -1,5 +1,5 @@
 # Step 1: Use an official Node.js runtime as a parent image
-FROM node:21.5.0 as builder
+FROM node:16-slim as builder
 
 # Set the working directory in the builder stage
 WORKDIR /usr/src/app
@@ -20,7 +20,7 @@ COPY . .
 RUN npm run build
 
 # Step 2: Use a fresh image to reduce size
-FROM node:21.5.0
+FROM node:16-slim as builder
 
 # Set the working directory in the production image
 WORKDIR /usr/src/app
