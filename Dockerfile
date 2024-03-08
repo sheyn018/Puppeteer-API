@@ -18,7 +18,7 @@ COPY . .
 RUN chmod +x ./node_modules/.bin/tsc
 
 # Compile TypeScript to JavaScript
-RUN npm run build
+RUN npx tsc
 
 # Step 2: Use a fresh image to reduce size
 FROM node:16-slim
