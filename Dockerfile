@@ -13,6 +13,7 @@ RUN npm install
 # Copy TypeScript configuration and source files
 COPY tsconfig.json ./
 COPY . .
+RUN chmod +x ./node_modules/.bin/tsc
 
 # Compile TypeScript to JavaScript using npx to directly call tsc
 RUN npx tsc
