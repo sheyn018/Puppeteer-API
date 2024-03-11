@@ -5,7 +5,8 @@ const app = express();
 const port = process.env.PORT || 3001;
 
 app.get('/capture-screenshot', async (req: any, res: { status: (arg0: number) => { (): any; new(): any; json: { (arg0: { error: string; }): void; new(): any; }; }; json: (arg0: { dataUrl: string; }) => void; }) => {
-    const url = 'https://imgtext-placeholder.onrender.com/?font=merriweather';
+    const font = req.query.font || 'merriweather'; // Use the provided font or default to 'merriweather'
+    const url = `https://imgtext-placeholder.onrender.com/?font=${font}`;
 
     if (!url) {
         console.log('No URL provided'); // Log when no URL is provided

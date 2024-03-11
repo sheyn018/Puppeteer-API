@@ -13,7 +13,8 @@ const puppeteer = require('puppeteer');
 const app = express();
 const port = process.env.PORT || 3001;
 app.get('/capture-screenshot', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const url = 'https://imgtext-placeholder.onrender.com/?font=merriweather';
+    const font = req.query.font || 'merriweather'; // Use the provided font or default to 'merriweather'
+    const url = `https://imgtext-placeholder.onrender.com/?font=${font}`;
     if (!url) {
         console.log('No URL provided'); // Log when no URL is provided
         return res.status(400).json({ error: 'Missing URL parameter' });
