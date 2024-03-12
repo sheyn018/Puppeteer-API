@@ -39,6 +39,13 @@ async function captureScreenshot(url: string) {
     try {
         await page.goto(url, { timeout: 60000 });
 
+        // Set the viewport height to 50% of the original height
+        const originalViewport = page.viewport();
+        await page.setViewport({
+            width: originalViewport.width,
+            height: Math.floor(originalViewport.height * 0.5),
+        });
+
         const screenshotBuffer = await page.screenshot();
 
         // Optionally log that the screenshot was taken before converting it
