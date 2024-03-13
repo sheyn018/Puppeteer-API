@@ -38,10 +38,8 @@ async function captureScreenshot(url: string, upperPartHeight: number = 250) {
     const page = await browser.newPage();
 
     try {
-        await page.goto(url, { timeout: 60000 });
-        // Add a buffer time of 10 seconds (10000 milliseconds)
-        await new Promise(resolve => setTimeout(resolve, 5000));
-
+        await page.goto(url, { waitUntil: 'networkidle0' });
+        
         // Set the viewport height to capture the upper part
         await page.setViewport({
             width: 1200, // Set the desired width

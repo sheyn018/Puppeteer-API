@@ -44,9 +44,7 @@ function captureScreenshot(url_1) {
         });
         const page = yield browser.newPage();
         try {
-            yield page.goto(url, { timeout: 60000 });
-            // Add a buffer time of 10 seconds (10000 milliseconds)
-            yield new Promise(resolve => setTimeout(resolve, 5000));
+            yield page.goto(url, { waitUntil: 'networkidle0' });
             // Set the viewport height to capture the upper part
             yield page.setViewport({
                 width: 1200, // Set the desired width
