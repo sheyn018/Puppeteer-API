@@ -13,26 +13,27 @@ const puppeteer = require('puppeteer');
 const app = express();
 const port = process.env.PORT || 3001;
 app.get('/capture-screenshot', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const font = req.query.font || 'merriweather'; // Use the provided font or default to 'merriweather'
+    const font = req.query.font || 'merriweather';
     const url = `https://imgtext-placeholder.onrender.com/?font=${font}`;
     if (!url) {
-        console.log('No URL provided'); // Log when no URL is provided
+        console.log('No URL provided');
         return res.status(400).json({ error: 'Missing URL parameter' });
     }
     try {
-        console.log(`Attempting to capture screenshot of: ${url}`); // Log the URL being captured
-        const dataUrl = yield captureScreenshot(url);
-        if (dataUrl) {
-            console.log('Screenshot captured successfully'); // Log on success
-            res.json({ dataUrl });
+        console.log(`Attempting to capture screenshot of: ${url}`);
+        const screenshotBuffer = yield captureScreenshot(url);
+        if (screenshotBuffer) {
+            console.log('Screenshot captured successfully');
+            res.set('Content-Type', 'image/png');
+            res.send(screenshotBuffer);
         }
         else {
-            console.log('Failed to generate Data URL'); // Log when data URL generation fails
-            res.status(500).json({ error: 'Failed to generate Data URL' });
+            console.log('Failed to capture screenshot');
+            res.status(500).json({ error: 'Failed to capture screenshot' });
         }
     }
     catch (error) {
-        console.error('Unexpected error:', error); // Log any unexpected errors
+        console.error('Unexpected error:', error);
         res.status(500).json({ error: 'Unexpected error' });
     }
 }));
@@ -44,20 +45,11 @@ function captureScreenshot(url) {
         const page = yield browser.newPage();
         try {
             yield page.goto(url, { timeout: 60000 });
-            // Set the viewport height to 50% of the original height
-            const originalViewport = page.viewport();
-            yield page.setViewport({
-                width: originalViewport.width,
-                height: Math.floor(originalViewport.height * 0.5),
-            });
             const screenshotBuffer = yield page.screenshot();
-            // Optionally log that the screenshot was taken before converting it
-            console.log('Screenshot taken, converting to Data URL');
-            const dataUrl = `data:image/png;base64,${screenshotBuffer.toString('base64')}`;
-            return dataUrl;
+            return screenshotBuffer;
         }
         catch (error) {
-            console.error('Error during navigation:', error.message); // Log navigation errors
+            console.error('Error during navigation:', error.message);
             return null;
         }
         finally {
@@ -66,5 +58,5 @@ function captureScreenshot(url) {
     });
 }
 app.listen(port, () => {
-    console.log(`Server is running on port ${port}`); // Confirmation the server is running
+    console.log(`Server is running on port ${port}`);
 });
