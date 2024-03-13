@@ -37,14 +37,21 @@ app.get('/capture-screenshot', (req, res) => __awaiter(void 0, void 0, void 0, f
         res.status(500).json({ error: 'Unexpected error' });
     }
 }));
-function captureScreenshot(url) {
-    return __awaiter(this, void 0, void 0, function* () {
+function captureScreenshot(url_1) {
+    return __awaiter(this, arguments, void 0, function* (url, upperPartHeight = 250) {
         const browser = yield puppeteer.launch({
             args: ['--no-sandbox', '--disable-setuid-sandbox'],
         });
         const page = yield browser.newPage();
         try {
             yield page.goto(url, { timeout: 60000 });
+            // Set the viewport height to capture the upper part
+            yield page.setViewport({
+                width: 1200, // Set the desired width
+                height: upperPartHeight,
+                deviceScaleFactor: 1,
+            });
+            // Capture a screenshot of the visible portion
             const screenshotBuffer = yield page.screenshot();
             return screenshotBuffer;
         }

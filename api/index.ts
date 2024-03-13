@@ -31,7 +31,7 @@ app.get('/capture-screenshot', async (req: { query: { font: string; }; }, res: {
     }
 });
 
-async function captureScreenshot(url: string) {
+async function captureScreenshot(url: string, upperPartHeight: number = 250) {
     const browser = await puppeteer.launch({
         args: ['--no-sandbox', '--disable-setuid-sandbox'],
     });
@@ -39,7 +39,17 @@ async function captureScreenshot(url: string) {
 
     try {
         await page.goto(url, { timeout: 60000 });
+
+        // Set the viewport height to capture the upper part
+        await page.setViewport({
+            width: 1200, // Set the desired width
+            height: upperPartHeight,
+            deviceScaleFactor: 1,
+        });
+
+        // Capture a screenshot of the visible portion
         const screenshotBuffer = await page.screenshot();
+
         return screenshotBuffer;
     } catch (error: string | any) {
         console.error('Error during navigation:', error.message);
