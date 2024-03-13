@@ -38,7 +38,7 @@ async function captureScreenshot(url: string, upperPartHeight: number = 250) {
     const page = await browser.newPage();
 
     try {
-        await page.goto(url, { waitUntil: 'networkidle0' });
+        await page.goto(url, { waitUntil: 'networkidle0' }, { timeout: 70000 });
         
         // Set the viewport height to capture the upper part
         await page.setViewport({
