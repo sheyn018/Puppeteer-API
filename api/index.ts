@@ -24,32 +24,56 @@ app.get('/capture-screenshot', async (req: { query: { font: string; }; }, res: {
         console.log('Font URL:', fontUrl);
 
         const htmlContent = `
-            <!DOCTYPE html>
-            <html lang="en">
-            <head>
-                <meta charset="UTF-8">
-                <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                <link href="${fontUrl}" rel="stylesheet">
-                <style>
-                    body {
-                        font-family: '${fontName}', sans-serif;
-                        margin: 0;
-                        padding: 0;
-                        display: flex;
-                        justify-content: center;
-                        align-items: center;
-                        height: 100vh;
-                    }
-                    h1 {
-                        text-align: center;
-                        font-size: 40px; /* Adjust the font size if necessary */
-                    }
-                </style>
-            </head>
-            <body>
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <link href="${fontUrl}" rel="stylesheet">
+            <style>
+                body {
+                    font-family: '${fontName}', sans-serif;
+                    margin: 0;
+                    padding: 0;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    height: 100vh;
+                    flex-direction: column; /* Added for vertical alignment */
+                }
+                .preview-container {
+                    text-align: center;
+                    margin-bottom: 10px; /* Adjust spacing between previews */
+                }
+                .preview-text {
+                    font-size: 20px; /* Adjust the font size if necessary */
+                    margin: 0; /* Remove margin */
+                    padding: 0; /* Remove padding */
+                }
+            </style>
+        </head>
+        <body>
+            <div class="preview-container">
                 <h1>${fontName}</h1>
-            </body>
-            </html>
+            </div>
+            <div class="preview-container">
+                <p class="preview-text">The quick brown fox jumps over the lazy dog</p>
+            </div>
+            <div class="preview-container">
+                <p class="preview-text">Lorem ipsum dolor sit amet, consectetur adipiscing elit</p>
+            </div>
+            <div class="preview-container">
+                <p class="preview-text">ABCDEFGHIJKLMNOPQRSTUVWXYZ</p>
+            </div>
+            <div class="preview-container">
+                <p class="preview-text">abcdefghijklmnopqrstuvwxyz</p>
+            </div>
+            <div class="preview-container">
+                <p class="preview-text">0123456789</p>
+            </div>
+            
+        </body>
+        </html>
         `;
 
         const screenshotBuffer = await captureScreenshot(htmlContent, 400); // Example height for cropping
