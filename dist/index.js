@@ -48,13 +48,25 @@ app.get('/capture-screenshot', (req, res) => __awaiter(void 0, void 0, void 0, f
                     height: 100vh;
                     flex-direction: column; /* Added for vertical alignment */
                 }
+                .divider {
+                    width: 80%; /* Adjust the width as needed */
+                    height: 1px; /* Adjust the thickness of the divider */
+                    background-color: #ccc; /* Adjust the color of the divider */
+                    margin: 10px 30px; /* Adjust the margin top and bottom */
+                }
                 .preview-container {
                     text-align: center;
                     margin-bottom: 10px; /* Adjust spacing between previews */
                 }
                 .preview-text {
-                    font-size: 20px; /* Adjust the font size if necessary */
+                    font-size: 23px; /* Adjust the font size if necessary */
                     margin: 0; /* Remove margin */
+                    padding: 0; /* Remove padding */
+                }
+
+                h1 {
+                    font-size: 40px; /* Adjust the font size if necessary */
+                    margin-top: 30px; /* Remove margin */
                     padding: 0; /* Remove padding */
                 }
             </style>
@@ -63,11 +75,9 @@ app.get('/capture-screenshot', (req, res) => __awaiter(void 0, void 0, void 0, f
             <div class="preview-container">
                 <h1>${fontName}</h1>
             </div>
+            <div class="divider"></div> <!-- Divider -->
             <div class="preview-container">
                 <p class="preview-text">The quick brown fox jumps over the lazy dog</p>
-            </div>
-            <div class="preview-container">
-                <p class="preview-text">Lorem ipsum dolor sit amet, consectetur adipiscing elit</p>
             </div>
             <div class="preview-container">
                 <p class="preview-text">ABCDEFGHIJKLMNOPQRSTUVWXYZ</p>
@@ -78,9 +88,9 @@ app.get('/capture-screenshot', (req, res) => __awaiter(void 0, void 0, void 0, f
             <div class="preview-container">
                 <p class="preview-text">0123456789</p>
             </div>
-            
+            <div class="divider"></div> <!-- Divider -->
         </body>
-        </html>
+        </html>        
         `;
         const screenshotBuffer = yield captureScreenshot(htmlContent, 400); // Example height for cropping
         if (screenshotBuffer) {
