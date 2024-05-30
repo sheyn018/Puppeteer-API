@@ -22,6 +22,8 @@ function initBrowser() {
         });
     });
 }
+// Existing route handler
+app.get("/", (req, res) => res.send("Hello world!"));
 app.get('/capture-screenshot', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const fontName = req.query.font || 'Playfair Display';

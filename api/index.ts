@@ -14,6 +14,9 @@ async function initBrowser() {
     });
 }
 
+// Existing route handler
+app.get("/", (req: any, res: any) => res.send("Hello world!"));
+
 app.get('/capture-screenshot', async (req: { query: { font: string; }; }, res: { set: (arg0: string, arg1: string) => void; send: (arg0: any) => void; status: (arg0: number) => { (): any; new(): any; json: { (arg0: { error: string; }): void; new(): any; }; }; }) => {
     try {
         const fontName = req.query.font || 'Playfair Display';
